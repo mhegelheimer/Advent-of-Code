@@ -59,17 +59,6 @@ def determine_score(ochoice: Choice, mchoice: Choice):
 
 
 def determine_choice(opponent, result):
-    """'
-    :opponent   oneof("A", "B", "C")
-    :result     oneof("X", "Y", "Z")
-
-        Y - Draw
-        X - Lose
-        Z - Win
-
-    Returns "A", "B" or "C" (Rock, Paper, Scissors)
-    """
-
     # draw
     if result == "Y":
         return Choice(opponent), Choice(opponent)
