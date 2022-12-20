@@ -18,23 +18,35 @@ def determine_priority(shared: list[str]) -> list[tuple]:
     return prioritized
 
 
+def chunks_of_three(l):
+    return ([v.strip() for v in l[pos:pos + 3]] for pos in range(0, len(l), 3))
+
+
 def main():
 
     # determine shared value in each rucksack
     items = []
     with open("input.txt") as rf:
-        for line in rf.readlines():
-            s = line.strip()
-            first_compartment, second_compartment = s[:len(s)//2], s[len(s)//2:]
-
-            shared = set() 
-            for chr in first_compartment:
-                if chr in second_compartment:
-                    shared.add(chr)
-
+        for chunk in chunks_of_three(rf.readlines()):
+            shared = set()
+            for char in chunk[0]:
+                if char in chunk[1] and char in chunk[2]:
+                    shared.add(char)
+            
             items.extend(list(shared))
 
-    # prioritize
+        # -- commented out remanants of p1 of the problem --
+        # for line in chunk:
+        #     s = line.strip()
+        #     first_compartment, second_compartment = s[:len(s)//2], s[len(s)//2:]
+
+        #     shared = set() 
+        #     for chr in first_compartment:
+        #         if chr in second_compartment:
+        #             shared.add(chr)
+
+        #     items.extend(list(shared))
+
     prioritized = determine_priority(items)
     return sum(map(lambda v: v[1], prioritized))
 
