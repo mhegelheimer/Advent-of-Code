@@ -24,10 +24,21 @@ Solution:
 
     2. Calculate the size of all directories (total and with sub-directories re-counted, per the example)
 """
+from dataclasses import dataclass
+
+
+@dataclass()
+class Node:
+    pass
 
 
 def main():
-    pass
+    with open("input.txt") as rf:
+        for line in rf.readlines():
+
+            # input is guaranteed to start at top-level directory so initialize a base node
+            # outside of the loop and fill in data from there
+            pass
 
 
 if __name__ == "__main__":
