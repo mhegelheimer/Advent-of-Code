@@ -66,14 +66,22 @@ def main():
         mv_count, init_loc, end_loc = int(chars[1]), int(chars[3]), int(chars[5])
 
         # update `stacks` state
-        for _ in range(mv_count):
-            stacks[end_loc - 1].append(stacks[init_loc - 1].pop())
 
+        # part 1
+        # for _ in range(mv_count):
+        #     stacks[end_loc - 1].append(stacks[init_loc - 1].pop())
+
+        # part 2
+        hold = []
+        for _ in range(mv_count):
+            hold.append(stacks[init_loc - 1].pop())
+
+        hold.reverse()
+        stacks[end_loc - 1].extend(hold)
         sprint(stacks)
 
     # top of stacks
     return list(map(lambda s: s[-1], filter(lambda x: x, stacks)))
-    # return [s[-1] for s in stacks]
 
 
 if __name__ == "__main__":
