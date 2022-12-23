@@ -2,6 +2,7 @@
 
 """
 
+
 def determine_priority(shared: list[str]) -> list[tuple]:
     """
     ord("A") = 65
@@ -12,14 +13,14 @@ def determine_priority(shared: list[str]) -> list[tuple]:
     prioritized = []
     for val in shared:
         if val.islower():
-            prioritized.append((val, ord(val)-96))
+            prioritized.append((val, ord(val) - 96))
         else:
-            prioritized.append((val, ord(val)-38))
+            prioritized.append((val, ord(val) - 38))
     return prioritized
 
 
 def chunks_of_three(l):
-    return ([v.strip() for v in l[pos:pos + 3]] for pos in range(0, len(l), 3))
+    return ([v.strip() for v in l[pos : pos + 3]] for pos in range(0, len(l), 3))
 
 
 def main():
@@ -32,7 +33,7 @@ def main():
             for char in chunk[0]:
                 if char in chunk[1] and char in chunk[2]:
                     shared.add(char)
-            
+
             items.extend(list(shared))
 
         # -- commented out remanants of p1 of the problem --
@@ -40,7 +41,7 @@ def main():
         #     s = line.strip()
         #     first_compartment, second_compartment = s[:len(s)//2], s[len(s)//2:]
 
-        #     shared = set() 
+        #     shared = set()
         #     for chr in first_compartment:
         #         if chr in second_compartment:
         #             shared.add(chr)
@@ -53,4 +54,6 @@ def main():
 
 if __name__ == "__main__":
     total = main()
-    print(f"{total} is the prioritized sum of duplicate rucksack items (in both compartments)")
+    print(
+        f"{total} is the prioritized sum of duplicate rucksack items (in both compartments)"
+    )

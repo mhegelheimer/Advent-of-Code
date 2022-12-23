@@ -9,7 +9,7 @@ SEP = "\n"
 
 
 def main():
-    
+
     max_elf = 1
     calorie_map = {}
 
@@ -28,7 +28,7 @@ def main():
                 calorie_map[curr_elf] += int(val)
             else:
                 calorie_map[curr_elf] = int(val)
-            
+
             # determine max
             if calorie_map[curr_elf] > calorie_map[max_elf]:
                 max_elf = curr_elf
@@ -44,9 +44,8 @@ if __name__ == "__main__":
     cals_list = [(elf, cals) for elf, cals in calories.items()]
     cals_list.sort(key=lambda v: v[1])
 
-    top_three = cals_list[len(cals_list)-3:]
+    top_three = cals_list[len(cals_list) - 3 :]
     _, top_three_cals = reduce(lambda x, y: (0, x[1] + y[1]), top_three)
 
     print(top_three)
     print(top_three_cals)
-    

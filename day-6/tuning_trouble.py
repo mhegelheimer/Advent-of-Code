@@ -6,10 +6,6 @@ def main():
     with open("input.txt") as fh:
         data = fh.readlines()[0].strip()
 
-    import pdb
-
-    pdb.set_trace()
-
     marker = []
     for idx, c in enumerate(data):
 
