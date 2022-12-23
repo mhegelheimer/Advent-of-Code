@@ -38,6 +38,7 @@ def main():
 
             # input is guaranteed to start at top-level directory so initialize a base node
             # outside of the loop and fill in data from there
+
             pass
 
 
