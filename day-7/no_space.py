@@ -190,5 +190,23 @@ if __name__ == "__main__":
     gather_dirs(base_dir)
     print(all_dirs)
 
-    # find the sum of all the directories with a total size of at most 100000
+    # P1: find the sum of all the directories with a total size of at most 100000
     print(sum(filter(lambda v: v <= 100000, map(lambda y: y[1], all_dirs))))
+
+    TOTAL_DISK_SPACE = 70000000
+    UNUSED_SPACE_TARGET = 30000000
+
+    total_used_space = base_dir.size
+    current_unused_space = TOTAL_DISK_SPACE - total_used_space
+    minimum_remove_amout = UNUSED_SPACE_TARGET - current_unused_space
+
+    # P2: find the smallest directory that results in target unused space
+    #     what is the total size of that directory?
+    print(f"Minimum dir size to remove {minimum_remove_amout}")
+
+    all_dirs.sort(key=lambda pair: pair[1])  # sort by size ascending in place
+    for idx, pair in enumerate(all_dirs):
+        name, size = pair
+        if size > minimum_remove_amout:
+            print(f"Dir: {name}, Size: {size}")
+            break
