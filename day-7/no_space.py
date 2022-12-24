@@ -70,7 +70,6 @@ class Node:
     size: int = 0  #
     parent: Any = None  #
     children: dict = field(default_factory=lambda: {})
-    # is_root: bool = False   #
 
     def __post_init__(self):
         if self.size:
