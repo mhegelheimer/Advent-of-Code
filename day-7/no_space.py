@@ -25,8 +25,6 @@ Solution:
     2. Calculate the size of all directories (total and with sub-directories re-counted, per the example)
 """
 from dataclasses import dataclass, field
-
-# from enum import Enum
 from typing import Any
 
 
@@ -69,13 +67,25 @@ NodeType = NODE_TYPE()
 class Node:
     name: str  #
     ntype: NodeType  #
-    size: int = None  #
+    size: int = 0  #
     parent: Any = None  #
     children: dict = field(default_factory=lambda: {})
     # is_root: bool = False   #
 
+    def __post_init__(self):
+        if self.size:
+            _child, _child_size = self.name, self.size
+            _node = self
+            while _node.parent:
+                print(
+                    f"Incrementing Node `{_node.parent.name}` size += {_child_size} (from child {_child})"
+                )
+                _node.parent.size += _child_size
+                print(f"Node {_node.parent.name} size: {_node.parent.size}")
+                _node = _node.parent
+
     def add_child(self, dnode):
-        assert isinstance(Node, dnode)
+        assert isinstance(dnode, Node)
         self.children[dnode.name] = dnode
 
     def get_child(self, dname):
@@ -89,46 +99,75 @@ def main():
 
     # mmmm yummy input data
     with open("input.txt") as rf:
-        data = TEST.splitlines()
-        # data = [l.strip().split(" ") for l in rf.readlines()]
+        data = rf.readlines()
+        # data = TEST.splitlines()
+        data = [l.strip().split(" ") for l in data]
 
     # input is guaranteed to start at top-level directory so we initialized
     # a base node outside of the loop to fill data in from
-    base_dir = Node(name="/", ntype=NodeType.TOP)
+    base_dir = Node(name="/", ntype=NodeType.DIR)
 
     # current working directory
     curr_dir = None
 
-    # parsing through via pointer (enables consuming output of `ls`
-    # immediately,for example, instead of tracking previous cmd.
+    # less pythonic but parsing data via pointer allows us to consuming output
+    # of `ls` immediately, instead of tracking previous cmd, for example.
     curr_line, last_line = 0, len(data)
-    while curr_line <= last_line:
+    while curr_line < last_line:
 
-        cmd = data[1]
-        if cmd == "cd":
-            tdir = data[2]
+        # handle cd commands
+        if (cmd := data[curr_line][1]) and cmd == "cd":
+            tdir = data[curr_line][2]
 
             # move to top-level dir
             if tdir == "/":
-                pass
+                curr_dir = base_dir
 
             # move to parent dir
             elif tdir == "..":
-                pass
+                curr_dir = curr_dir.parent
 
-            # check if target directory (`tdir`) exists, else create
+            # move to target directory (`tdir`) if exists, else create and move there
             else:
-                pass
+                if target := curr_dir.get_child(tdir):
+                    curr_dir = target
+
+            curr_line += 1
 
         elif cmd == "ls":
-            # increment pointer until next command ("$" token)
-            while (line := data[curr_line]) and not line.startswith("$"):
+
+            if (line := data[curr_line]) and line[0] == "$":
+                curr_line += 1
+
+            # parse `ls` output until next command ("$" token)
+            while (curr_line < last_line) and data[curr_line][0] != "$":
 
                 # for each line, verify dir/file exists otherwsie
                 # create node to represent
-                # "dir <name>"" or "size:<int>, name:<str>"
+                # cases:
+                #   (1.) "dir <name>""
+                #   (2.) "size:<int>, name:<str>"
 
-                # increment
+                if data[curr_line][0] == "dir":
+                    dname = data[curr_line][1]
+                    if dname not in curr_dir.get_children():
+                        curr_dir.add_child(
+                            Node(name=dname, ntype=NodeType.DIR, parent=curr_dir)
+                        )
+
+                else:
+                    size, fname = data[curr_line]
+                    if fname not in curr_dir.get_children():
+                        curr_dir.add_child(
+                            Node(
+                                name=fname,
+                                ntype=NodeType.FILE,
+                                size=int(size),
+                                parent=curr_dir,
+                            )
+                        )
+                        # print(f"{curr_dir.name} -> {fname}")
+
                 curr_line += 1
 
         else:
@@ -138,4 +177,18 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    base_dir = main()
+
+    all_dirs = [(base_dir.name, base_dir.size)]
+
+    def gather_dirs(base_node):
+        for d in base_node.get_children().values():
+            if d.ntype == NodeType.DIR:
+                all_dirs.append((d.name, d.size))
+                gather_dirs(d)
+
+    gather_dirs(base_dir)
+    print(all_dirs)
+
+    # find the sum of all the directories with a total size of at most 100000
+    print(sum(filter(lambda v: v <= 100000, map(lambda y: y[1], all_dirs))))
