@@ -74,8 +74,7 @@ class Node:
 
     def __post_init__(self):
         if self.size:
-            _child, _child_size = self.name, self.size
-            _node = self
+            _node, _child, _child_size = self, self.name, self.size
             while _node.parent:
                 print(
                     f"Incrementing Node `{_node.parent.name}` size += {_child_size} (from child {_child})"
@@ -103,35 +102,26 @@ def main():
         # data = TEST.splitlines()
         data = [l.strip().split(" ") for l in data]
 
-    # input is guaranteed to start at top-level directory so we initialized
-    # a base node outside of the loop to fill data in from
+    # input is guaranteed to start at top-level directory so
+    # initialized a base node outside of the loop to start with
     base_dir = Node(name="/", ntype=NodeType.DIR)
 
     # current working directory
     curr_dir = None
 
-    # less pythonic but parsing data via pointer allows us to consuming output
-    # of `ls` immediately, instead of tracking previous cmd, for example.
     curr_line, last_line = 0, len(data)
     while curr_line < last_line:
 
-        # handle cd commands
         if (cmd := data[curr_line][1]) and cmd == "cd":
             tdir = data[curr_line][2]
 
-            # move to top-level dir
             if tdir == "/":
                 curr_dir = base_dir
-
-            # move to parent dir
             elif tdir == "..":
                 curr_dir = curr_dir.parent
-
-            # move to target directory (`tdir`) if exists, else create and move there
             else:
                 if target := curr_dir.get_child(tdir):
                     curr_dir = target
-
             curr_line += 1
 
         elif cmd == "ls":
@@ -142,10 +132,9 @@ def main():
             # parse `ls` output until next command ("$" token)
             while (curr_line < last_line) and data[curr_line][0] != "$":
 
-                # for each line, verify dir/file exists otherwsie
-                # create node to represent
-                # cases:
-                #   (1.) "dir <name>""
+                # for each line, verify dir/file exists otherwise create a
+                # node to represent. potential cases:
+                #   (1.) "dir <name>"
                 #   (2.) "size:<int>, name:<str>"
 
                 if data[curr_line][0] == "dir":
